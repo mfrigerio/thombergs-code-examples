@@ -3,9 +3,8 @@ package io.reflectoring.specification.model;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -18,5 +17,11 @@ public class Distributor {
 
     @OneToOne
     private Address address;
+
+    @ManyToMany
+    private Set<Address> secondaryAddresses;
+
+    @Embedded
+    private TaxId taxId;
 
 }

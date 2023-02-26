@@ -8,11 +8,18 @@ insert into address (id, city, state, pincode) values
 ('addr_4', ' San Diego', 'CALIFORNIA', 'AA9230');
 insert into address (id, city, state, pincode) values
 ('addr_5', 'palm city', 'TEXAS', 'AA9560');
+insert into address (id, city, state, pincode) values
+('addr_6', 'chicago', 'TEXAS', 'AB9898');
 
-insert into distributor (id, name, address_id) values
-('dist_1', 'john doe', 'addr_1');
-insert into distributor (id, name, address_id) values
-('dist_2', 'Max well', 'addr_2');
+insert into distributor (id, name, address_id, vat_number) values
+('dist_1', 'john doe', 'addr_1', '345678');
+insert into distributor (id, name, address_id, vat_number) values
+('dist_2', 'Max well', 'addr_2', '234567');
+insert into distributor (id, name, address_id, vat_number) values
+('dist_3', 'Peter parker', 'addr_2', '123456');
+
+insert into distributor_secondary_addresses (distributor_id, secondary_addresses_id) values
+('dist_3', 'addr_1');
 
 insert into product
 (id, name, price, manufacturing_date, manufacturing_place_id, weight, height, width, distributor_id, category)
