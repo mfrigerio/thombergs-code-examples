@@ -19,6 +19,7 @@ insert into distributor (id, name, address_id, vat_number) values
 ('dist_3', 'Peter parker', 'addr_2', '123456');
 
 insert into distributor_secondary_addresses (distributor_id, secondary_addresses_id) values
+('dist_1', 'addr_1'),
 ('dist_3', 'addr_1');
 
 insert into product

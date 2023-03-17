@@ -1,7 +1,6 @@
 package io.reflectoring.specification.repository;
 
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.lang.Nullable;
 
 import javax.persistence.criteria.*;
 import javax.persistence.metamodel.*;
@@ -13,6 +12,10 @@ public interface PathSpecification<T> {
 
     default Specification<T> atRoot() {
         return this::toPredicate;
+    }
+
+    default <S> Specification<S> atPath(final PathBuilder<S, T> pathBuilder) {
+        return (root, query, builder) -> toPredicate(pathBuilder.toPath(root), query, builder);
     }
 
     default <S> Specification<S> atPath(final SingularAttribute<S, T> attribute, JoinType joinType) {

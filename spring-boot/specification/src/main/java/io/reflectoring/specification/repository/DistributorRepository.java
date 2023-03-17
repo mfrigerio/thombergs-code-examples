@@ -1,19 +1,21 @@
 package io.reflectoring.specification.repository;
 
-import io.reflectoring.specification.model.Distributor;
-import io.reflectoring.specification.model.Distributor_;
+import io.reflectoring.specification.model.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-import javax.persistence.criteria.JoinType;
 import java.util.List;
 
+import static io.reflectoring.specification.repository.PathBuilder.fromAttribute;
 import static io.reflectoring.specification.repository.specifications.AddressSpecifications.cityLike;
-import static io.reflectoring.specification.repository.specifications.DistributorSpecifications.*;
-import static io.reflectoring.specification.repository.specifications.TaxIdSpecifications.vatNumberLike;
+import static javax.persistence.criteria.JoinType.LEFT;
 import static org.springframework.data.jpa.domain.Specification.where;
 
-public interface DistributorRepository extends JpaRepository<Distributor, String>, JpaSpecificationExecutor<Distributor> {
+public interface DistributorRepository extends
+    JpaRepository<Distributor, String>,
+    JpaSpecificationExecutor<Distributor>,
+    JpaSpecificationBuilder<Distributor> {
 
     default List<Distributor> findByDistributorName(String name) {
         return findAll(
@@ -24,14 +26,14 @@ public interface DistributorRepository extends JpaRepository<Distributor, String
     default List<Distributor> findByDistributorNameAndCity(String name, String city) {
         return findAll(
             where(nameLike(name)
-                .and(address(cityLike(city))))
+                .and((cityLike(city).atPath(fromAttribute(Distributor_.address)))))
         );
     }
 
     default List<Distributor> findByPrimaryAndSecondaryAddressCity(String city) {
         return findAll(
             where(cityLike(city).atPath(Distributor_.address))
-                .or(cityLike(city).atPath(Distributor_.secondaryAddresses, JoinType.LEFT))
+                .or(cityLike(city).atPath(Distributor_.secondaryAddresses, LEFT))
         );
     }
 
@@ -39,5 +41,13 @@ public interface DistributorRepository extends JpaRepository<Distributor, String
         return findAll(
             where(vatNumberLike(vatNumber).atPath(Distributor_.taxId))
         );
+    }
+
+    private Specification<Distributor> nameLike(String name) {
+        return like(Distributor_.name, name);
+    }
+
+    private PathSpecification<TaxId> vatNumberLike(String vatNumber) {
+        return (path, cq, cb) -> cb.like(path.get(TaxId_.vatNumber), "%" + vatNumber + "%");
     }
 }
