@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.util.List;
 
-import static io.reflectoring.specification.repository.PathBuilder.fromAttribute;
+import static io.reflectoring.specification.repository.PathBuilder.from;
 import static io.reflectoring.specification.repository.specifications.AddressSpecifications.cityLike;
 import static javax.persistence.criteria.JoinType.LEFT;
 import static org.springframework.data.jpa.domain.Specification.where;
@@ -26,7 +26,7 @@ public interface DistributorRepository extends
     default List<Distributor> findByDistributorNameAndCity(String name, String city) {
         return findAll(
             where(nameLike(name)
-                .and((cityLike(city).atPath(fromAttribute(Distributor_.address)))))
+                .and((cityLike(city).atPath(from(Distributor_.address)))))
         );
     }
 

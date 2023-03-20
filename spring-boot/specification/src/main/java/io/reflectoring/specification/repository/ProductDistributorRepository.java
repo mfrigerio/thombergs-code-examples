@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import java.util.List;
 
 import static io.reflectoring.specification.repository.JoinBuilder.fromJoin;
-import static io.reflectoring.specification.repository.PathBuilder.fromRoot;
+import static io.reflectoring.specification.repository.PathBuilder.from;
 import static org.springframework.data.jpa.domain.Specification.where;
 
 public interface ProductDistributorRepository extends
@@ -24,15 +24,14 @@ public interface ProductDistributorRepository extends
 
     private Specification<Product> distributorCityLike(String city) {
         return like(fromJoin(Product_.distributor)
-                .get(Distributor_.address)
+                .join(Distributor_.address)
                 .get(Address_.city)
             , city)
             .or(
-                like(fromRoot((root) ->
-                    root.join(Product_.distributor)
-                        .get(Distributor_.address)
-                        .get(Address_.city)
-                ), city)
+                like(fromJoin(Product_.distributor)
+                    .join(Distributor_.secondaryAddresses)
+                    .get(Address_.city)
+                , city)
             );
 //        return like(
 //            from((root) -> root.join(Product_.distributor)

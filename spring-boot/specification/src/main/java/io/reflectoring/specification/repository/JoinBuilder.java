@@ -3,8 +3,6 @@ package io.reflectoring.specification.repository;
 import javax.persistence.criteria.*;
 import javax.persistence.metamodel.*;
 
-import java.util.Set;
-
 import static javax.persistence.criteria.JoinType.INNER;
 
 @FunctionalInterface
@@ -12,8 +10,8 @@ public interface JoinBuilder<T, X> extends PathBuilder<T, X> {
 
     Join<?, X> toPath(Root<T> root);
 
-    static <T, X> JoinBuilder<T, X> fromJoin(JoinBuilder<T, X> pathBuilder) {
-        return pathBuilder;
+    static <T, X> JoinBuilder<T, X> fromJoin(JoinBuilder<T, X> joinBuilder) {
+        return joinBuilder;
     }
 
     static <T, X> JoinBuilder<T, X> fromJoin(SingularAttribute<? super T, X> attribute, JoinType joinType) {

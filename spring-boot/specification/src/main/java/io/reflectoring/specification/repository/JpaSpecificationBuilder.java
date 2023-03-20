@@ -5,7 +5,7 @@ import org.springframework.data.jpa.domain.Specification;
 import javax.persistence.metamodel.SingularAttribute;
 import java.util.Collection;
 
-import static io.reflectoring.specification.repository.PathBuilder.fromAttribute;
+import static io.reflectoring.specification.repository.PathBuilder.from;
 
 public interface JpaSpecificationBuilder<T> {
 
@@ -14,7 +14,7 @@ public interface JpaSpecificationBuilder<T> {
     }
 
     default <X> Specification<T> eq(SingularAttribute<? super T, X> attribute1, X value) {
-        return eq(fromAttribute(attribute1), value);
+        return eq(from(attribute1), value);
     }
 
     default Specification<T> like(PathBuilder<T, String> pathBuilder, String substring) {
@@ -22,7 +22,7 @@ public interface JpaSpecificationBuilder<T> {
     }
 
     default Specification<T> like(SingularAttribute<? super T, String> attribute, String substring) {
-        return like(fromAttribute(attribute), substring);
+        return like(from(attribute), substring);
     }
 
     default String likePattern(String substring) {
