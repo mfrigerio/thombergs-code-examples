@@ -8,7 +8,9 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import java.util.List;
 
 import static io.reflectoring.specification.repository.JoinBuilder.fromJoin;
-import static io.reflectoring.specification.repository.PathBuilder.from;
+import static io.reflectoring.specification.repository.PathBuilder.fromAttribute;
+import static io.reflectoring.specification.repository.PathBuilder.fromRoot;
+import static javax.persistence.criteria.JoinType.LEFT;
 import static org.springframework.data.jpa.domain.Specification.where;
 
 public interface ProductDistributorRepository extends
@@ -23,39 +25,35 @@ public interface ProductDistributorRepository extends
     }
 
     private Specification<Product> distributorCityLike(String city) {
-        return like(fromJoin(Product_.distributor)
-                .join(Distributor_.address)
+        return like(fromAttribute(Product_.distributor)
+                .get(Distributor_.address)
                 .get(Address_.city)
             , city)
             .or(
                 like(fromJoin(Product_.distributor)
-                    .join(Distributor_.secondaryAddresses)
-                    .get(Address_.city)
-                , city)
+                        .join(Distributor_.secondaryAddresses)
+                        .get(Address_.city)
+                    , city)
+            ).or(
+                like(
+                    fromRoot((root) -> root.join(Product_.distributor)
+                        .join(Distributor_.secondaryAddresses)
+                        .get(Address_.city)
+                    ), city)
+            ).or(
+                addressCityLike(city).atPath(
+                    fromRoot((root) -> root.join(Product_.distributor)
+                        .join(Distributor_.secondaryAddresses)
+                    )
+                )
+            ).or(
+                addressCityLike(city).atPath(
+                    fromJoin(Product_.distributor)
+                        .join(Distributor_.secondaryAddresses, LEFT)
+                )
+            ).or(
+                distributorAddress(addressCityLike(city))
             );
-//        return like(
-//            from((root) -> root.join(Product_.distributor)
-//                .join(Distributor_.secondaryAddresses)
-//                .get(Address_.city)
-//            ), city);
-//        return addressCityLike(city).atPath(
-//            from((root) -> root.join(Product_.distributor)
-//                .join(Distributor_.secondaryAddresses)
-//            )
-//        );
-//        return addressCityLike(city).atPath(
-//            PathBuilder.from(Product_.distributor)
-//                .join(Distributor_.secondaryAddresses)
-//        );
-//        return like(
-//            from(Product_.distributor)
-//                .get(Distributor_.secondaryAddresses)
-//                .get(Address_.city)
-//            , city);
-//        return addressCityLike(city).atPath(
-//            from(Product_.distributor).join(Distributor_.secondaryAddresses, JoinType.LEFT)
-//        );
-//        return distributorAddress(addressCityLike(city));
     }
 
     private Specification<Product> distributorAddress(PathSpecification<Address> pathSpecification) {

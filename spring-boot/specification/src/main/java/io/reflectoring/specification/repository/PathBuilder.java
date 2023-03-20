@@ -8,11 +8,11 @@ public interface PathBuilder<T, X> {
 
     Path<X> toPath(Root<T> root);
 
-    static <T, X> PathBuilder<T, X> from(PathBuilder<T, X> pathBuilder) {
+    static <T, X> PathBuilder<T, X> fromRoot(PathBuilder<T, X> pathBuilder) {
         return pathBuilder;
     }
 
-    static <T, X> PathBuilder<T, X> from(SingularAttribute<? super T, X> attribute) {
+    static <T, X> PathBuilder<T, X> fromAttribute(SingularAttribute<? super T, X> attribute) {
         return (root) -> root.get(attribute);
     }
 
